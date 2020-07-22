@@ -1,11 +1,11 @@
-import React from 'react';
-import {
-  StatusBar, Image, FlatList,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StatusBar, FlatList, PermissionsAndroid } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
+import GeoLocation from '@react-native-community/geolocation';
+import { Marker } from 'react-native-maps';
 
-import mapTest from '../../assets/map-test.png';
+import api from '../../services/openWeatherApi';
 
 import {
   Container,
@@ -35,13 +35,72 @@ import {
   TemperatureValue,
 } from './styles';
 
-interface TemperaturesBox {
-  hour: string;
-  temperature: number;
+interface WeatherReport {
+  weather: [
+    {
+      description: string;
+      icon: string;
+    },
+  ];
+  main: {
+    temp: number;
+    temp_min: number;
+    temp_max: number;
+    humidity: number;
+  };
+  wind: {
+    speed: number;
+  };
+  name: string;
+}
+
+interface UserPosition {
+  latitude: number;
+  longitude: number;
 }
 
 const DashBoard: React.FC = () => {
+  const [hasLocalPermission, setHasLocalPermisson] = useState(false);
+  const [userPosition, setUserPosition] = useState<UserPosition | null>(null);
+
   const navigation = useNavigation();
+
+  async function verifyLocationPermission() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('permissão concedida');
+        setHasLocalPermisson(true);
+      } else {
+        console.log('permissão negada');
+        setHasLocalPermisson(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    verifyLocationPermission();
+
+    if (hasLocalPermission) {
+      GeoLocation.getCurrentPosition(
+        position => {
+          setUserPosition({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          console.log(position);
+        },
+        error => {
+          console.log(error.code, error.message);
+        },
+      );
+    }
+  }, [hasLocalPermission]);
 
   const DATA = [
     {
@@ -70,7 +129,6 @@ const DashBoard: React.FC = () => {
     <>
       <StatusBar barStyle="light-content" backgroundColor="#3867D6" />
       <Container>
-
         <LocationContainer>
           <Header>
             <BackButton onPress={handleNavigationGoBackToWelcome}>
@@ -79,130 +137,94 @@ const DashBoard: React.FC = () => {
 
             <ButtonReload>
               <Icon name="rotate-ccw" size={26} color="#FFF" />
-              <ButtonReloadText>
-                Atualizar
-              </ButtonReloadText>
+              <ButtonReloadText>Atualizar</ButtonReloadText>
             </ButtonReload>
           </Header>
 
           <Report>
-            <City>
-              Salto
-            </City>
+            <City>Salto</City>
 
-            <DateLabel>
-              20 Maio, 2020
-            </DateLabel>
+            <DateLabel>20 Maio, 2020</DateLabel>
 
             <TemperatureInfo>
               <Status>
                 <Icon name="sun" size={30} color="#FF9900" />
 
-                <StatusLabel>
-                  Ensolarado
-                </StatusLabel>
+                <StatusLabel>Ensolarado</StatusLabel>
               </Status>
 
-              <Temperature>
-                25 ºC
-              </Temperature>
+              <Temperature>25 ºC</Temperature>
             </TemperatureInfo>
           </Report>
 
-          <MapContainer>
-
-            <Image source={mapTest} />
-
-            {/* sera alterado para usar o map view */}
-
-          </MapContainer>
+          {userPosition && (
+            <MapContainer
+              initialRegion={{
+                latitude: userPosition.latitude,
+                longitude: userPosition.longitude,
+                latitudeDelta: 0.014,
+                longitudeDelta: 0.014,
+              }}
+            >
+              <Marker coordinate={userPosition} />
+            </MapContainer>
+          )}
         </LocationContainer>
 
         <AditionalInfo>
-          <AditionalInfoTitle>
-            Informação Adicional
-          </AditionalInfoTitle>
+          <AditionalInfoTitle>Informação Adicional</AditionalInfoTitle>
 
           <Columns>
             <Column>
-              <ColumnLabel>
-                Chuva
-              </ColumnLabel>
+              <ColumnLabel>Chuva</ColumnLabel>
 
-              <ColumnValue>
-                33%
-              </ColumnValue>
+              <ColumnValue>33%</ColumnValue>
             </Column>
 
             <Column>
-              <ColumnLabel>
-                Humidade
-              </ColumnLabel>
+              <ColumnLabel>Humidade</ColumnLabel>
 
-              <ColumnValue>
-                20%
-              </ColumnValue>
+              <ColumnValue>20%</ColumnValue>
             </Column>
 
             <Column>
-              <ColumnLabel>
-                Vento
-              </ColumnLabel>
+              <ColumnLabel>Vento</ColumnLabel>
 
-              <ColumnValue>
-                18 km/h
-              </ColumnValue>
+              <ColumnValue>18 km/h</ColumnValue>
             </Column>
 
             <Column>
-              <ColumnLabel>
-                Max
-              </ColumnLabel>
+              <ColumnLabel>Max</ColumnLabel>
 
-              <ColumnValue>
-                26 ºC
-              </ColumnValue>
+              <ColumnValue>26 ºC</ColumnValue>
             </Column>
 
             <Column>
-              <ColumnLabel>
-                Min
-              </ColumnLabel>
+              <ColumnLabel>Min</ColumnLabel>
 
-              <ColumnValue>
-                15 ºC
-              </ColumnValue>
+              <ColumnValue>15 ºC</ColumnValue>
             </Column>
           </Columns>
-
         </AditionalInfo>
 
         <ReportHours>
           <FlatList
             data={DATA}
-            keyExtractor={(item) => item.hour}
+            keyExtractor={item => item.hour}
             horizontal
             renderItem={({ item }) => (
               <TemperatureReport>
-                <TemperatureHour>
-                  {item.hour}
-                </TemperatureHour>
+                <TemperatureHour>{item.hour}</TemperatureHour>
 
                 <IconCircle>
-
                   <Icon name="cloud" size={30} color="#A4B0BE" />
-
                 </IconCircle>
 
-                <TemperatureValue>
-                  {`${item.temperature} ºC`}
-                </TemperatureValue>
+                <TemperatureValue>{`${item.temperature} ºC`}</TemperatureValue>
               </TemperatureReport>
             )}
           />
-
         </ReportHours>
-
       </Container>
     </>
   );

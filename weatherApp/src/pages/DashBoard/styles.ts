@@ -1,15 +1,16 @@
 import styled from 'styled-components/native';
 import { RectButton } from 'react-native-gesture-handler';
+import MapView from 'react-native-maps';
 
 export const Container = styled.View`
   flex: 1;
-  background: #F6F7F9;
+  background: #f6f7f9;
 `;
 
 export const LocationContainer = styled.View`
   flex: 2;
   max-height: 60%;
-  background: #3867D6;
+  background: #3867d6;
   padding: 0 32px;
   border-bottom-right-radius: 50px;
   border-bottom-left-radius: 50px;
@@ -22,11 +23,10 @@ export const Header = styled.View`
   align-items: center;
 `;
 
-export const BackButton = styled(RectButton)`
-`;
+export const BackButton = styled(RectButton)``;
 
 export const ButtonReload = styled(RectButton)`
-  background: #FD9644;
+  background: #fd9644;
   width: 124px;
   height: 45px;
   border-radius: 5px;
@@ -38,7 +38,7 @@ export const ButtonReload = styled(RectButton)`
 export const ButtonReloadText = styled.Text`
   font-family: 'Roboto-Medium';
   font-size: 16px;
-  color: #FFF;
+  color: #fff;
   margin-left: 5px;
 `;
 
@@ -48,12 +48,12 @@ export const Report = styled.View`
 
 export const City = styled.Text`
   font-size: 32px;
-  color: #FFF;
+  color: #fff;
 `;
 
 export const DateLabel = styled.Text`
   margin-top: 10px;
-  color: #A4B0BE;
+  color: #a4b0be;
 `;
 
 export const TemperatureInfo = styled.View`
@@ -70,24 +70,25 @@ export const Status = styled.View`
 
 export const StatusLabel = styled.Text`
   font-size: 20px;
-  color: #FF9900;
+  color: #ff9900;
   margin-left: 8px;
 `;
 
 export const Temperature = styled.Text`
   font-family: 'Robot-Medium';
-  font-size: 60px;
-  color: #FFF;
+  font-size: 50px;
+  color: #fff;
 `;
 
-export const MapContainer = styled.View`
+export const MapContainer = styled(MapView)`
   margin-top: 15px;
-  border-radius: 5px;
+  height: 178px;
+  width: 100%;
 `;
 
 export const AditionalInfo = styled.View`
   padding: 0 32px;
-  background: #FFF;
+  background: #fff;
   border-radius: 10px;
   margin: 30px 15px 0 15px;
   height: 15%;
@@ -98,7 +99,7 @@ export const AditionalInfo = styled.View`
 export const AditionalInfoTitle = styled.Text`
   font-family: 'Roboto-Medium';
   font-size: 22px;
-  color: #FD9644;
+  color: #fd9644;
 `;
 
 export const Columns = styled.View`
@@ -113,7 +114,7 @@ export const Column = styled.View`
 
 export const ColumnLabel = styled.Text`
   font-size: 16px;
-  color: #A4B0BE;
+  color: #a4b0be;
 `;
 
 export const ColumnValue = styled.Text`
@@ -121,10 +122,10 @@ export const ColumnValue = styled.Text`
 `;
 
 export const ReportHours = styled.View`
-  background: #CED6E0;
+  background: #ced6e0;
   margin-top: 25px;
   flex: 1;
-  max-height: 20%;;
+  max-height: 20%;
   border-top-right-radius: 50px;
   border-top-left-radius: 50px;
   align-items: center;
@@ -133,27 +134,27 @@ export const ReportHours = styled.View`
 
 export const TemperatureReport = styled.View`
   margin: 10px;
-  background: #3867D6;
-  width: 120px;
-  height: 120px;
+  background: #3867d6;
+  width: 110px;
+  height: 110px;
   align-items: center;
   border-radius: 30px;
 `;
 
 export const TemperatureHour = styled.Text`
-  color: #FFF;
+  color: #fff;
   font-size: 16px;
   padding: 4px;
 `;
 
 export const IconCircle = styled.View`
-  background: #FFF;
+  background: #fff;
   border-radius: 50px;
   padding: 10px;
 `;
 
 export const TemperatureValue = styled.Text`
-  color: #FFF;
-  font-size: 24px;
+  color: #fff;
+  font-size: 20px;
   padding: 4px;
 `;

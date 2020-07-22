@@ -24,7 +24,7 @@ export const ButtonContainer = styled(RectButton)`
   margin: 60px 0 0;
   width: 100%;
   height: 50px;
-  background: #3867D6;;
+  background: #3867d6;
   border-radius: 5px;
 
   justify-content: center;
@@ -34,5 +34,5 @@ export const ButtonContainer = styled(RectButton)`
 export const ButtonText = styled.Text`
   font-family: 'Roboto-Medium';
   font-size: 18px;
-  color: #FFF;
+  color: #fff;
 `;

@@ -6,7 +6,11 @@ import logoImg from '../../assets/weather-logo.png';
 import backgroundImage from '../../assets/weather-home-background.png';
 
 import {
-  Container, ImageBackground, Description, ButtonContainer, ButtonText,
+  Container,
+  ImageBackground,
+  Description,
+  ButtonContainer,
+  ButtonText,
 } from './styles';
 
 const Welcome: React.FC = () => {
@@ -29,7 +33,6 @@ const Welcome: React.FC = () => {
       <ButtonContainer onPress={handleNavigateToDashboard}>
         <ButtonText>Acessar</ButtonText>
       </ButtonContainer>
-
     </Container>
   );
 };

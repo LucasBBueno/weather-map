@@ -9,7 +9,7 @@ export const Container = styled.View`
 `;
 
 export const ImageBackground = styled.Image`
-  margin-top: 100px;
+  margin-top: 50px;
 `;
 
 export const Description = styled.Text`

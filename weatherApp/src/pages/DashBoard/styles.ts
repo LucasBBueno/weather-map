@@ -8,10 +8,9 @@ export const Container = styled.View`
 `;
 
 export const LocationContainer = styled.View`
-  flex: 2;
-  max-height: 65%;
+  height: 60%;
   background: #3867d6;
-  padding: 0 32px;
+  padding: 0 30px;
   border-bottom-right-radius: 50px;
   border-bottom-left-radius: 50px;
 `;
@@ -43,28 +42,27 @@ export const ButtonReloadText = styled.Text`
 `;
 
 export const Report = styled.View`
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 export const City = styled.Text`
-  font-size: 32px;
+  font-size: 30px;
   color: #fff;
 `;
 
 export const DateLabel = styled.Text`
-  margin-top: 10px;
+  margin-top: 5px;
   color: #a4b0be;
 `;
 
 export const TemperatureInfo = styled.View`
-  margin-top: 20px;
   align-items: flex-end;
 `;
 
 export const Status = styled.View`
   flex-direction: row;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 export const StatusImage = styled.Image`
@@ -80,14 +78,15 @@ export const StatusLabel = styled.Text`
 
 export const Temperature = styled.Text`
   font-family: 'Robot-Medium';
-  font-size: 50px;
+  font-size: 40px;
   color: #fff;
 `;
 
 export const MapContainer = styled(MapView)`
-  margin-top: 15px;
-  height: 178px;
+  margin-top: 20px;
+  height: 30%;
   width: 100%;
+  border-radius: 5px;
 `;
 
 export const AditionalInfo = styled.View`
@@ -127,8 +126,8 @@ export const ColumnValue = styled.Text`
 
 export const ReportHours = styled.View`
   background: #ced6e0;
+  height: 20%;
   flex: 1;
-  max-height: 18%;
   border-top-right-radius: 50px;
   border-top-left-radius: 50px;
   align-items: center;

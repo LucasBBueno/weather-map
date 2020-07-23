@@ -24,7 +24,7 @@ export const ButtonContainer = styled(RectButton)`
   margin: 60px 0 0;
   width: 100%;
   height: 50px;
-  background: #3867d6;
+  background: #2046a0;
   border-radius: 5px;
 
   justify-content: center;

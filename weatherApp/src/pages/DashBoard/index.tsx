@@ -6,6 +6,14 @@ import GeoLocation from '@react-native-community/geolocation';
 import { Marker } from 'react-native-maps';
 
 import api from '../../services/openWeatherApi';
+import { apiKey } from '../../config/openWeatherApiKey';
+
+import { imgBaseURL } from '../../config/openWeatherIconBaseLink';
+
+import {
+  formatActualDateForDayWithMonthAndYear,
+  formatDateTimeFromTimeStamp,
+} from '../../utils/dateFormatter';
 
 import {
   Container,
@@ -19,6 +27,7 @@ import {
   DateLabel,
   TemperatureInfo,
   Status,
+  StatusImage,
   StatusLabel,
   Temperature,
   MapContainer,
@@ -31,11 +40,17 @@ import {
   ReportHours,
   TemperatureReport,
   TemperatureHour,
-  IconCircle,
   TemperatureValue,
+  NoDataContainer,
+  NoDataText,
 } from './styles';
 
-interface WeatherReport {
+interface UserPosition {
+  latitude: number;
+  longitude: number;
+}
+
+interface CurrentWeather {
   weather: [
     {
       description: string;
@@ -52,35 +67,94 @@ interface WeatherReport {
     speed: number;
   };
   name: string;
+  iconUrl: string;
+  formattedDate: string;
 }
 
-interface UserPosition {
-  latitude: number;
-  longitude: number;
+interface HourlyWeather {
+  dt: number;
+  temp: number;
+  weather: [
+    {
+      icon: string;
+    },
+  ];
+  iconUrl: string;
 }
 
 const DashBoard: React.FC = () => {
   const [hasLocalPermission, setHasLocalPermisson] = useState(false);
   const [userPosition, setUserPosition] = useState<UserPosition | null>(null);
+  const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(
+    null,
+  );
+  const [hourlyWeather, setHourlyWeather] = useState<HourlyWeather[]>([]);
 
   const navigation = useNavigation();
 
-  async function verifyLocationPermission() {
+  async function verifyLocationPermission(): Promise<void> {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('permissão concedida');
         setHasLocalPermisson(true);
       } else {
-        console.log('permissão negada');
         setHasLocalPermisson(false);
       }
     } catch (err) {
       console.log(err);
     }
+  }
+
+  function findCurrentWeatherByUserPosition(): void {
+    if (userPosition) {
+      api
+        .get(
+          `weather?lat=${userPosition.latitude}&lon=${userPosition.longitude}&appid=${apiKey}&units=metric&lang=pt_br`,
+        )
+        .then(response => {
+          const { weather, main, wind, name } = response.data;
+          setCurrentWeather({
+            weather,
+            main,
+            wind,
+            name,
+            iconUrl: `${imgBaseURL}/${weather[0].icon}@2x.png`,
+            formattedDate: formatActualDateForDayWithMonthAndYear(),
+          });
+        })
+        .catch(err => console.log(err));
+    }
+  }
+
+  function findHourlyWeatherByUserPosition(): void {
+    if (userPosition) {
+      api
+        .get(
+          `onecall?lat=${userPosition.latitude}&lon=${userPosition.longitude}&exclude=current,minutel,daily&appid=${apiKey}&units=metric&lang=pt_br`,
+        )
+        .then(response => {
+          const { hourly } = response.data;
+
+          const formattedHourly = hourly.map((hour: HourlyWeather) => ({
+            ...hour,
+            iconUrl: `${imgBaseURL}/${hour.weather[0].icon}@2x.png`,
+          }));
+          setHourlyWeather(formattedHourly);
+        })
+        .catch(err => console.log(err));
+    }
+  }
+
+  function handleReloadButton(): void {
+    findCurrentWeatherByUserPosition();
+    findHourlyWeatherByUserPosition();
+  }
+
+  function handleNavigationGoBackToWelcome(): void {
+    navigation.goBack();
   }
 
   useEffect(() => {
@@ -93,41 +167,20 @@ const DashBoard: React.FC = () => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
-          console.log(position);
         },
         error => {
           console.log(error.code, error.message);
         },
       );
+
+      findCurrentWeatherByUserPosition();
+      findHourlyWeatherByUserPosition();
     }
   }, [hasLocalPermission]);
 
-  const DATA = [
-    {
-      hour: '10:00',
-      temperature: '26',
-    },
-    {
-      hour: '12:00',
-      temperature: '25',
-    },
-    {
-      hour: '14:00',
-      temperature: '23',
-    },
-    {
-      hour: '16:00',
-      temperature: '23',
-    },
-  ];
-
-  function handleNavigationGoBackToWelcome() {
-    navigation.goBack();
-  }
-
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#3867D6" />
+      <StatusBar barStyle="light-content" backgroundColor="#2046A0" />
       <Container>
         <LocationContainer>
           <Header>
@@ -135,95 +188,106 @@ const DashBoard: React.FC = () => {
               <Icon name="arrow-left" size={26} color="#FFF" />
             </BackButton>
 
-            <ButtonReload>
+            <ButtonReload onPress={handleReloadButton}>
               <Icon name="rotate-ccw" size={26} color="#FFF" />
               <ButtonReloadText>Atualizar</ButtonReloadText>
             </ButtonReload>
           </Header>
 
-          <Report>
-            <City>Salto</City>
+          {currentWeather ? (
+            <>
+              <Report>
+                <City>{currentWeather.name}</City>
 
-            <DateLabel>20 Maio, 2020</DateLabel>
+                <DateLabel>{currentWeather.formattedDate}</DateLabel>
 
-            <TemperatureInfo>
-              <Status>
-                <Icon name="sun" size={30} color="#FF9900" />
+                <Status>
+                  <StatusImage source={{ uri: currentWeather.iconUrl }} />
 
-                <StatusLabel>Ensolarado</StatusLabel>
-              </Status>
+                  <StatusLabel>
+                    {currentWeather.weather[0].description}
+                  </StatusLabel>
+                </Status>
 
-              <Temperature>25 ºC</Temperature>
-            </TemperatureInfo>
-          </Report>
+                <TemperatureInfo>
+                  <Temperature>{`${currentWeather.main.temp} ºC`}</Temperature>
+                </TemperatureInfo>
+              </Report>
 
-          {userPosition && (
-            <MapContainer
-              initialRegion={{
-                latitude: userPosition.latitude,
-                longitude: userPosition.longitude,
-                latitudeDelta: 0.014,
-                longitudeDelta: 0.014,
-              }}
-            >
-              <Marker coordinate={userPosition} />
-            </MapContainer>
+              {userPosition && (
+                <MapContainer
+                  initialRegion={{
+                    latitude: userPosition.latitude,
+                    longitude: userPosition.longitude,
+                    latitudeDelta: 0.014,
+                    longitudeDelta: 0.014,
+                  }}
+                >
+                  <Marker coordinate={userPosition} />
+                </MapContainer>
+              )}
+            </>
+          ) : (
+            <NoDataContainer>
+              <NoDataText>Sem dados para exibir.</NoDataText>
+              <NoDataText>Clique no botão Atualizar</NoDataText>
+            </NoDataContainer>
           )}
         </LocationContainer>
 
         <AditionalInfo>
-          <AditionalInfoTitle>Informação Adicional</AditionalInfoTitle>
+          {currentWeather && (
+            <>
+              <AditionalInfoTitle>Informação Adicional</AditionalInfoTitle>
 
-          <Columns>
-            <Column>
-              <ColumnLabel>Chuva</ColumnLabel>
+              <Columns>
+                <Column>
+                  <ColumnLabel>Umidade</ColumnLabel>
 
-              <ColumnValue>33%</ColumnValue>
-            </Column>
+                  <ColumnValue>{`${currentWeather.main.humidity}%`}</ColumnValue>
+                </Column>
 
-            <Column>
-              <ColumnLabel>Humidade</ColumnLabel>
+                <Column>
+                  <ColumnLabel>Vento</ColumnLabel>
 
-              <ColumnValue>20%</ColumnValue>
-            </Column>
+                  <ColumnValue>{`${currentWeather.wind.speed} km/h`}</ColumnValue>
+                </Column>
 
-            <Column>
-              <ColumnLabel>Vento</ColumnLabel>
+                <Column>
+                  <ColumnLabel>Max</ColumnLabel>
 
-              <ColumnValue>18 km/h</ColumnValue>
-            </Column>
+                  <ColumnValue>{`${currentWeather.main.temp_max} ºC`}</ColumnValue>
+                </Column>
 
-            <Column>
-              <ColumnLabel>Max</ColumnLabel>
+                <Column>
+                  <ColumnLabel>Min</ColumnLabel>
 
-              <ColumnValue>26 ºC</ColumnValue>
-            </Column>
-
-            <Column>
-              <ColumnLabel>Min</ColumnLabel>
-
-              <ColumnValue>15 ºC</ColumnValue>
-            </Column>
-          </Columns>
+                  <ColumnValue>{`${currentWeather.main.temp_min} ºC`}</ColumnValue>
+                </Column>
+              </Columns>
+            </>
+          )}
         </AditionalInfo>
 
         <ReportHours>
-          <FlatList
-            data={DATA}
-            keyExtractor={item => item.hour}
-            horizontal
-            renderItem={({ item }) => (
-              <TemperatureReport>
-                <TemperatureHour>{item.hour}</TemperatureHour>
+          {hourlyWeather && (
+            <FlatList
+              data={hourlyWeather}
+              keyExtractor={item => item.dt.toString()}
+              horizontal
+              renderItem={({ item }) => (
+                <TemperatureReport>
+                  <TemperatureHour>
+                    {formatDateTimeFromTimeStamp(item.dt)}
+                  </TemperatureHour>
 
-                <IconCircle>
-                  <Icon name="cloud" size={30} color="#A4B0BE" />
-                </IconCircle>
+                  <StatusImage source={{ uri: item.iconUrl }} />
 
-                <TemperatureValue>{`${item.temperature} ºC`}</TemperatureValue>
-              </TemperatureReport>
-            )}
-          />
+                  <TemperatureValue>{`${item.temp} ºC`}</TemperatureValue>
+                </TemperatureReport>
+              )}
+            />
+          )}
         </ReportHours>
       </Container>
     </>

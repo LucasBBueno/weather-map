@@ -9,15 +9,15 @@ export const Container = styled.View`
 
 export const LocationContainer = styled.View`
   flex: 2;
-  max-height: 60%;
-  background: #3867d6;
+  max-height: 65%;
+  background: #2046a0;
   padding: 0 32px;
   border-bottom-right-radius: 50px;
   border-bottom-left-radius: 50px;
 `;
 
 export const Header = styled.View`
-  margin-top: 30px;
+  margin-top: 15px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -58,14 +58,18 @@ export const DateLabel = styled.Text`
 
 export const TemperatureInfo = styled.View`
   margin-top: 20px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
 `;
 
 export const Status = styled.View`
   flex-direction: row;
   align-items: center;
+  margin-top: 20px;
+`;
+
+export const StatusImage = styled.Image`
+  height: 50px;
+  width: 50px;
 `;
 
 export const StatusLabel = styled.Text`
@@ -90,7 +94,7 @@ export const AditionalInfo = styled.View`
   padding: 0 32px;
   background: #fff;
   border-radius: 10px;
-  margin: 30px 15px 0 15px;
+  margin: 15px 15px 15px 15px;
   height: 15%;
   justify-content: center;
   elevation: 12;
@@ -123,9 +127,8 @@ export const ColumnValue = styled.Text`
 
 export const ReportHours = styled.View`
   background: #ced6e0;
-  margin-top: 25px;
   flex: 1;
-  max-height: 20%;
+  max-height: 18%;
   border-top-right-radius: 50px;
   border-top-left-radius: 50px;
   align-items: center;
@@ -134,9 +137,9 @@ export const ReportHours = styled.View`
 
 export const TemperatureReport = styled.View`
   margin: 10px;
-  background: #3867d6;
+  background: #2046a0;
   width: 110px;
-  height: 110px;
+  height: 120px;
   align-items: center;
   border-radius: 30px;
 `;
@@ -147,14 +150,19 @@ export const TemperatureHour = styled.Text`
   padding: 4px;
 `;
 
-export const IconCircle = styled.View`
-  background: #fff;
-  border-radius: 50px;
-  padding: 10px;
-`;
-
 export const TemperatureValue = styled.Text`
   color: #fff;
-  font-size: 20px;
+  font-size: 18px;
   padding: 4px;
+`;
+
+export const NoDataContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const NoDataText = styled.Text`
+  font-size: 22px;
+  color: #ced6e0;
 `;

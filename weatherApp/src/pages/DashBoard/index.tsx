@@ -15,6 +15,8 @@ import {
   formatDateTimeFromTimeStamp,
 } from '../../utils/dateFormatter';
 
+import { removeDecimalPartOfValue } from '../../utils/numberFormatter';
+
 import {
   Container,
   LocationContainer,
@@ -180,7 +182,7 @@ const DashBoard: React.FC = () => {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#2046A0" />
+      <StatusBar barStyle="light-content" backgroundColor="#3867D6" />
       <Container>
         <LocationContainer>
           <Header>
@@ -210,7 +212,9 @@ const DashBoard: React.FC = () => {
                 </Status>
 
                 <TemperatureInfo>
-                  <Temperature>{`${currentWeather.main.temp} ºC`}</Temperature>
+                  <Temperature>
+                    {`${removeDecimalPartOfValue(currentWeather.main.temp)} ºC`}
+                  </Temperature>
                 </TemperatureInfo>
               </Report>
 
@@ -235,42 +239,48 @@ const DashBoard: React.FC = () => {
           )}
         </LocationContainer>
 
-        <AditionalInfo>
-          {currentWeather && (
-            <>
-              <AditionalInfoTitle>Informação Adicional</AditionalInfoTitle>
+        {currentWeather && (
+          <AditionalInfo>
+            <AditionalInfoTitle>Informação Adicional</AditionalInfoTitle>
 
-              <Columns>
-                <Column>
-                  <ColumnLabel>Umidade</ColumnLabel>
+            <Columns>
+              <Column>
+                <ColumnLabel>Umidade</ColumnLabel>
 
-                  <ColumnValue>{`${currentWeather.main.humidity}%`}</ColumnValue>
-                </Column>
+                <ColumnValue>{`${currentWeather.main.humidity}%`}</ColumnValue>
+              </Column>
 
-                <Column>
-                  <ColumnLabel>Vento</ColumnLabel>
+              <Column>
+                <ColumnLabel>Vento</ColumnLabel>
 
-                  <ColumnValue>{`${currentWeather.wind.speed} km/h`}</ColumnValue>
-                </Column>
+                <ColumnValue>{`${currentWeather.wind.speed} km/h`}</ColumnValue>
+              </Column>
 
-                <Column>
-                  <ColumnLabel>Max</ColumnLabel>
+              <Column>
+                <ColumnLabel>Max</ColumnLabel>
 
-                  <ColumnValue>{`${currentWeather.main.temp_max} ºC`}</ColumnValue>
-                </Column>
+                <ColumnValue>
+                  {`${removeDecimalPartOfValue(
+                    currentWeather.main.temp_max,
+                  )} ºC`}
+                </ColumnValue>
+              </Column>
 
-                <Column>
-                  <ColumnLabel>Min</ColumnLabel>
+              <Column>
+                <ColumnLabel>Min</ColumnLabel>
 
-                  <ColumnValue>{`${currentWeather.main.temp_min} ºC`}</ColumnValue>
-                </Column>
-              </Columns>
-            </>
-          )}
-        </AditionalInfo>
+                <ColumnValue>
+                  {`${removeDecimalPartOfValue(
+                    currentWeather.main.temp_min,
+                  )} ºC`}
+                </ColumnValue>
+              </Column>
+            </Columns>
+          </AditionalInfo>
+        )}
 
-        <ReportHours>
-          {hourlyWeather && (
+        {currentWeather && hourlyWeather && (
+          <ReportHours>
             <FlatList
               data={hourlyWeather}
               keyExtractor={item => item.dt.toString()}
@@ -283,12 +293,14 @@ const DashBoard: React.FC = () => {
 
                   <StatusImage source={{ uri: item.iconUrl }} />
 
-                  <TemperatureValue>{`${item.temp} ºC`}</TemperatureValue>
+                  <TemperatureValue>
+                    {`${removeDecimalPartOfValue(item.temp)} ºC`}
+                  </TemperatureValue>
                 </TemperatureReport>
               )}
             />
-          )}
-        </ReportHours>
+          </ReportHours>
+        )}
       </Container>
     </>
   );

@@ -10,7 +10,7 @@ export const Container = styled.View`
 export const LocationContainer = styled.View`
   flex: 2;
   max-height: 65%;
-  background: #2046a0;
+  background: #3867d6;
   padding: 0 32px;
   border-bottom-right-radius: 50px;
   border-bottom-left-radius: 50px;
@@ -43,7 +43,7 @@ export const ButtonReloadText = styled.Text`
 `;
 
 export const Report = styled.View`
-  margin-top: 30px;
+  margin-top: 20px;
 `;
 
 export const City = styled.Text`
@@ -137,7 +137,7 @@ export const ReportHours = styled.View`
 
 export const TemperatureReport = styled.View`
   margin: 10px;
-  background: #2046a0;
+  background: #3867d6;
   width: 110px;
   height: 120px;
   align-items: center;
@@ -163,6 +163,7 @@ export const NoDataContainer = styled.View`
 `;
 
 export const NoDataText = styled.Text`
+  font-family: 'Roboto-Medium';
   font-size: 22px;
-  color: #ced6e0;
+  color: #fff;
 `;
